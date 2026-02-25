@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ShopWiz — Smart Ecommerce{% endblock %}</title>
+  <meta name="description"
+    content="{% block meta_desc %}Discover products personalized just for you with AI-powered recommendations.{% endblock %}">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- ░░ NAVBAR ░░ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <!-- Logo -->
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        <span class="logo-icon">🛍️</span>ShopWiz
+      </a>
+
+      <!-- Search -->
+      <div class="nav-search">
+        <div class="search-wrapper">
+          <i class="bi bi-search search-icon"></i>
+          <input type="text" id="searchInput" placeholder="Search for products, brands…" autocomplete="off">
+          <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="nav-actions">
+        {% if user %}
+        <a href="{{ url_for('wishlist') }}" class="nav-btn icon-btn" title="Wishlist">
+          <i class="bi bi-heart"></i>
+        </a>
+        <div class="nav-user-menu">
+          <button class="nav-btn user-btn">
+            <i class="bi bi-person-circle"></i>
+            <span>{{ user }}</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="user-dropdown">
+            <a href="{{ url_for('wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a>
+            <a href="{{ url_for('recommendations') }}"><i class="bi bi-stars"></i> Recommendations</a>
+            <hr>
+            <a href="{{ url_for('logout') }}" class="logout-link"><i class="bi bi-box-arrow-right"></i> Logout</a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="nav-btn outline-btn">Login</a>
+        <a href="{{ url_for('signup') }}" class="nav-btn primary-btn">Sign Up</a>
+        {% endif %}
+
+        <!-- Dark mode toggle -->
+        <button class="nav-btn icon-btn" id="themeToggle" title="Toggle theme">
+          <i class="bi bi-moon-stars-fill"></i>
+        </button>
+
+        <!-- Hamburger -->
+        <button class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="{{ url_for('index') }}"><i class="bi bi-house"></i> Home</a>
+      <a href="{{ url_for('products') }}"><i class="bi bi-grid"></i> Products</a>
+      <a href="{{ url_for('recommendations') }}"><i class="bi bi-stars"></i> Recommendations</a>
+      {% if user %}
+      <a href="{{ url_for('wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a>
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      {% else %}
+      <a href="{{ url_for('login') }}"><i class="bi bi-person"></i> Login</a>
+      <a href="{{ url_for('signup') }}"><i class="bi bi-person-plus"></i> Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- ░░ FLASH TOASTS ░░ -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div id="toastContainer">
+    {% for category, message in messages %}
+    <div class="toast toast-{{ category }}">
+      <i
+        class="bi {% if category == 'success' %}bi-check-circle{% elif category == 'error' %}bi-x-circle{% else %}bi-info-circle{% endif %}"></i>
+      <span>{{ message }}</span>
+      <button onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- ░░ PAGE CONTENT ░░ -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ░░ FOOTER ░░ -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="footer-logo">🛍️ ShopWiz</div>
+        <p>AI-powered recommendations to help you discover products you'll love.</p>
+        <div class="footer-social">
+          <a href="#"><i class="bi bi-twitter-x"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-github"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Shop</h4>
+        <a href="{{ url_for('products') }}">All Products</a>
+        <a href="{{ url_for('recommendations') }}">Recommendations</a>
+        <a href="{{ url_for('products') }}?category=Beauty">Beauty</a>
+        <a href="{{ url_for('products') }}?category=Health">Health</a>
+      </div>
+      <div class="footer-links">
+        <h4>Account</h4>
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('signup') }}">Sign Up</a>
+        <a href="{{ url_for('wishlist') }}">Wishlist</a>
+      </div>
+      <div class="footer-links">
+        <h4>Support</h4>
+        <a href="#">FAQ</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 ShopWiz. All rights reserved. Crafted with ❤️ by <span
+          style="color:var(--primary); font-weight:600;">Deepak Kumar</span> using Flask & ML.</p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="backToTop" title="Back to top"><i class="bi bi-arrow-up"></i></button>
+
+  <!-- ░░ SCRIPTS ░░ -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

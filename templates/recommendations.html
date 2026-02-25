@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}Recommendations — ShopWiz{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-stars"></i> AI <span class="gradient-text">Recommendations</span></h1>
+        <p>Enter a product name to discover similar items you'll love</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Search Form -->
+    <div class="rec-search-card">
+        <form action="{{ url_for('recommendations') }}" method="POST" class="rec-form">
+            <div class="rec-input-group">
+                <label>Product Name</label>
+                <div style="position:relative">
+                    <input type="text" name="prod" value="{{ prod }}" placeholder="e.g. Nicole by OPI Nail Lacquer…"
+                        id="recSearch" autocomplete="off" required>
+                    <div class="search-suggestions" id="recSuggestions"></div>
+                </div>
+            </div>
+            <div class="rec-input-group rec-input-sm">
+                <label>No. of Results</label>
+                <select name="nbr">
+                    {% for n in [4, 8, 12, 16] %}
+                    <option value="{{ n }}" {% if n==8 %}selected{% endif %}>{{ n }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-primary-lg rec-submit">
+                <i class="bi bi-stars"></i> Find Similar
+            </button>
+        </form>
+    </div>
+
+    <!-- Results -->
+    {% if message %}
+    <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>{{ message }}</h3>
+        <p>Try searching for a product that exists in our catalog.</p>
+    </div>
+    {% elif recs %}
+    <div class="rec-results-header">
+        <h2>Showing <span class="gradient-text">{{ recs|length }} recommendations</span> for "{{ prod }}"</h2>
+    </div>
+    <div class="products-grid products-grid-4">
+        {% for p in recs %}
+        {{ product_card(p, loop.index) }}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="rec-tips">
+        <h3>💡 How it works</h3>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <span class="tip-num">1</span>
+                <p>Enter the <strong>exact product name</strong> from our catalog</p>
+            </div>
+            <div class="tip-card">
+                <span class="tip-num">2</span>
+                <p>Our <strong>AI engine</strong> analyzes product tags using TF-IDF + Cosine Similarity</p>
+            </div>
+            <div class="tip-card">
+                <span class="tip-num">3</span>
+                <p>Get <strong>personalized recommendations</strong> ranked by relevance</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Search suggestions for recommendation page
+    const recSearch = document.getElementById('recSearch');
+    const recSugg = document.getElementById('recSuggestions');
+    if (recSearch) {
+        recSearch.addEventListener('input', async function () {
+            const q = this.value.trim();
+            if (q.length < 2) { recSugg.innerHTML = ''; recSugg.classList.remove('show'); return; }
+            const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.length) {
+                recSugg.innerHTML = data.map(d => `<div class="sugg-item" onclick="recSearch.value='${d.replace(/'/g, "\\'")}';recSugg.classList.remove('show')">${d}</div>`).join('');
+                recSugg.classList.add('show');
+            } else { recSugg.innerHTML = ''; recSugg.classList.remove('show'); }
+        });
+    }
+</script>
+{% endblock %}

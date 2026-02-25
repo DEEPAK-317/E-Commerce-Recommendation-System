@@ -1,0 +1,46 @@
+{% macro product_card(p, idx) %}
+<div class="product-card" style="animation-delay: {{ (idx * 0.05)|round(2) }}s">
+    <div class="card-img-wrap">
+        {% if p.discount > 0 %}
+        <span class="badge-discount">-{{ p.discount }}%</span>
+        {% endif %}
+        <img src="{{ url_for('static', filename=p.local_img) }}" alt="{{ p.Name }}" loading="lazy">
+        <div class="card-overlay">
+            <a href="{{ url_for('product_detail', name=p.Name) }}" class="overlay-btn">
+                <i class="bi bi-eye"></i> Quick View
+            </a>
+        </div>
+        <button class="wishlist-btn" data-name="{{ p.Name }}" title="Add to Wishlist">
+            <i class="bi bi-heart"></i>
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="card-brand">{{ p.Brand if p.Brand and p.Brand != 'nan' else 'ShopWiz' }}</div>
+        <h3 class="card-title">
+            <a href="{{ url_for('product_detail', name=p.Name) }}">{{ truncate(p.Name, 40) }}</a>
+        </h3>
+        <div class="card-rating">
+            {% set rating = p.Rating | float %}
+            {% for i in range(5) %}
+            {% if i < rating | int %} <i class="bi bi-star-fill"></i>
+                {% elif i < rating %} <i class="bi bi-star-half"></i>
+                    {% else %}
+                    <i class="bi bi-star"></i>
+                    {% endif %}
+                    {% endfor %}
+                    <span class="review-count">({{ p.ReviewCount }})</span>
+        </div>
+        <div class="card-footer-row">
+            <div class="card-price">
+                {% if p.discount > 0 %}
+                <span class="price-original">${{ (p.price / (1 - p.discount/100)) | round(2) }}</span>
+                {% endif %}
+                <span class="price-current">${{ p.price }}</span>
+            </div>
+            <button class="add-cart-btn" data-name="{{ p.Name }}" data-price="{{ p.price }}">
+                <i class="bi bi-bag-plus"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endmacro %}

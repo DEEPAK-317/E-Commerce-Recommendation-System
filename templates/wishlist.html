@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}My Wishlist — ShopWiz{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-heart-fill" style="color:var(--accent)"></i> My <span class="gradient-text">Wishlist</span>
+        </h1>
+        <p>{{ items|length }} saved item{% if items|length != 1 %}s{% endif %}</p>
+    </div>
+</div>
+<div class="container">
+    {% if items %}
+    <div class="products-grid products-grid-4">
+        {% for p in items %}
+        {{ product_card(p, loop.index) }}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">💔</div>
+        <h3>Your wishlist is empty</h3>
+        <p>Start browsing and tap the ♥ button to save products you love.</p>
+        <a href="{{ url_for('products') }}" class="btn-primary-lg">Explore Products</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

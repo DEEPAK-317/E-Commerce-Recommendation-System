@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}Products — ShopWiz{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>All <span class="gradient-text">Products</span></h1>
+        <p>Showing {{ items|length }} products</p>
+    </div>
+</div>
+
+<div class="container products-page">
+    <!-- Sidebar Filters -->
+    <aside class="filters-sidebar">
+        <div class="filter-section">
+            <h3><i class="bi bi-funnel"></i> Filters</h3>
+        </div>
+        <form method="GET" action="{{ url_for('products') }}" id="filterForm">
+            <div class="filter-group">
+                <label class="filter-label">Category</label>
+                <div class="filter-options">
+                    <label class="filter-chip {% if not category %}active{% endif %}">
+                        <input type="radio" name="category" value="" {% if not category %}checked{% endif %}
+                            onchange="this.form.submit()"> All
+                    </label>
+                    {% for cat in categories %}
+                    <label class="filter-chip {% if category == cat %}active{% endif %}">
+                        <input type="radio" name="category" value="{{ cat }}" {% if category==cat %}checked{% endif %}
+                            onchange="this.form.submit()"> {{ cat }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Sort By</label>
+                <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <option value="" {% if not sort %}selected{% endif %}>Default</option>
+                    <option value="rating" {% if sort=='rating' %}selected{% endif %}>Top Rated</option>
+                    <option value="low" {% if sort=='low' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="high" {% if sort=='high' %}selected{% endif %}>Price: High to Low</option>
+                </select>
+            </div>
+            <input type="hidden" name="page" value="1">
+        </form>
+    </aside>
+
+    <!-- Products Grid -->
+    <div class="products-main">
+        {% if items %}
+        <div class="products-grid products-grid-4">
+            {% for p in items %}
+            {{ product_card(p, loop.index) }}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('products', page=page-1, category=category, sort=sort) }}" class="page-btn"><i
+                    class="bi bi-chevron-left"></i></a>
+            {% endif %}
+            {% for p in range(1, pages+1) %}
+            {% if p <= 5 or p==pages or p==page %} <a
+                href="{{ url_for('products', page=p, category=category, sort=sort) }}"
+                class="page-btn {% if p == page %}active{% endif %}">{{ p }}</a>
+                {% elif p == 6 and pages > 6 %}<span class="page-dots">…</span>{% endif %}
+                {% endfor %}
+                {% if page < pages %} <a href="{{ url_for('products', page=page+1, category=category, sort=sort) }}"
+                    class="page-btn"><i class="bi bi-chevron-right"></i></a>
+                    {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No products found</h3>
+            <p>Try a different category or search term.</p>
+            <a href="{{ url_for('products') }}" class="btn-primary-lg">Clear Filters</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

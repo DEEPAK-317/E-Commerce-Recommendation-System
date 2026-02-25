@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}{{ product.Name[:40] }} — ShopWiz{% endblock %}
+
+{% block content %}
+<div class="container detail-page">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav">
+        <a href="{{ url_for('index') }}">Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="{{ url_for('products') }}">Products</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>{{ truncate(product.Name, 30) }}</span>
+    </nav>
+
+    <div class="detail-grid">
+        <!-- Image Gallery -->
+        <div class="detail-gallery">
+            <div class="main-image">
+                <img src="{{ url_for('static', filename=product.local_img) }}" alt="{{ product.Name }}" id="mainImg">
+            </div>
+            <div class="thumb-row">
+                {% for i in range(1, 5) %}
+                <img src="{{ url_for('static', filename='img/img_' ~ ((i % 8) + 1) ~ '.png') }}"
+                    class="thumb {% if i==1 %}active{% endif %}"
+                    onclick="document.getElementById('mainImg').src=this.src; document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active')); this.classList.add('active')">
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="detail-info">
+            <div class="detail-brand">{{ product.Brand if product.Brand and product.Brand != 'nan' else 'ShopWiz Brand'
+                }}</div>
+            <h1 class="detail-name">{{ product.Name }}</h1>
+
+            <div class="detail-rating">
+                {% set rating = product.Rating | float %}
+                {% for i in range(5) %}
+                {% if i < rating | int %}<i class="bi bi-star-fill"></i>
+                    {% elif i < rating %}<i class="bi bi-star-half"></i>
+                        {% else %}<i class="bi bi-star"></i>{% endif %}
+                        {% endfor %}
+                        <span class="rating-num">{{ rating }}</span>
+                        <span class="review-count">({{ product.ReviewCount }} reviews)</span>
+            </div>
+
+            <div class="detail-price">
+                {% if product.discount > 0 %}
+                <span class="price-original">${{ (product.price / (1 - product.discount/100)) | round(2) }}</span>
+                <span class="discount-badge">{{ product.discount }}% OFF</span>
+                {% endif %}
+                <span class="price-big">${{ product.price }}</span>
+            </div>
+
+            <div class="detail-meta">
+                <span class="meta-tag"><i class="bi bi-tag"></i> {{ product.category }}</span>
+                <span class="meta-tag in-stock"><i class="bi bi-check-circle"></i> In Stock</span>
+                <span class="meta-tag"><i class="bi bi-truck"></i> Free Shipping</span>
+            </div>
+
+            <div class="detail-desc">
+                <h4>About this product</h4>
+                <p>{{ product.Name }} by {{ product.Brand if product.Brand and product.Brand != 'nan' else 'ShopWiz
+                    Brand' }} is a highly-rated product in the {{ product.category }} category. With a rating of {{
+                    rating }}/5 from {{ product.ReviewCount }} verified reviews, this product is loved by our community.
+                </p>
+            </div>
+
+            <div class="detail-actions">
+                <div class="qty-control">
+                    <button
+                        onclick="this.nextElementSibling.value=Math.max(1,+this.nextElementSibling.value-1)">−</button>
+                    <input type="number" value="1" min="1" max="99" id="qtyInput">
+                    <button
+                        onclick="this.previousElementSibling.value=Math.min(99,+this.previousElementSibling.value+1)">+</button>
+                </div>
+                <button class="btn-cart-lg add-cart-btn" data-name="{{ product.Name }}"
+                    data-price="{{ product.price }}">
+                    <i class="bi bi-bag-plus"></i> Add to Cart
+                </button>
+                <button class="btn-wish-lg wishlist-btn" data-name="{{ product.Name }}">
+                    <i class="bi bi-heart"></i>
+                </button>
+            </div>
+
+            <div class="detail-share">
+                <span>Share:</span>
+                <a href="#"><i class="bi bi-twitter-x"></i></a>
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-whatsapp"></i></a>
+                <a href="#"><i class="bi bi-link-45deg"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Products -->
+    {% if similar %}
+    <div class="section">
+        <div class="section-header">
+            <h2>🔮 Similar <span class="gradient-text">Products</span></h2>
+            <p>You might also like these</p>
+        </div>
+        <div class="products-grid products-grid-4">
+            {% for p in similar %}
+            {{ product_card(p, loop.index) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

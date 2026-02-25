@@ -1,0 +1,5 @@
+flask
+pandas
+flask_sqlalchemy
+scikit-learn
+numpy

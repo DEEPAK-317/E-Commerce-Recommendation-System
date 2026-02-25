@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Login — ShopWiz{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-visual">
+        <div class="auth-blob"></div>
+        <div class="auth-brand">
+            <div class="auth-logo">🛍️</div>
+            <h2>ShopWiz</h2>
+            <p>Your AI-powered shopping companion</p>
+            <div class="auth-features">
+                <div class="af"><i class="bi bi-stars"></i> Personalized Recommendations</div>
+                <div class="af"><i class="bi bi-heart"></i> Save to Wishlist</div>
+                <div class="af"><i class="bi bi-bag-check"></i> Smart Cart</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <h1>Welcome back 👋</h1>
+        <p class="auth-sub">Sign in to continue to ShopWiz</p>
+
+        <form action="{{ url_for('login') }}" method="POST" class="auth-form" id="loginForm">
+            <div class="form-group">
+                <label for="username"><i class="bi bi-person"></i> Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="bi bi-lock"></i> Password</label>
+                <div class="pass-wrap">
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-pass" onclick="togglePass('password')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="form-row">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+            <button type="submit" class="auth-submit">
+                <span>Sign In</span><i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="auth-divider"><span>or</span></div>
+        <div class="auth-switch">
+            Don't have an account? <a href="{{ url_for('signup') }}">Sign up free</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function togglePass(id) {
+        const input = document.getElementById(id);
+        const btn = input.nextElementSibling.querySelector('i');
+        if (input.type === 'password') { input.type = 'text'; btn.className = 'bi bi-eye-slash'; }
+        else { input.type = 'password'; btn.className = 'bi bi-eye'; }
+    }
+</script>
+{% endblock %}

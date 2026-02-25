@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}ShopWiz — Discover Products You Love{% endblock %}
+
+{% block content %}
+
+<!-- ░░ HERO ░░ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge animate-fade-in"><i class="bi bi-stars"></i> AI-Powered Recommendations</div>
+    <h1 class="hero-title animate-slide-up">
+      Discover Products<br>
+      <span class="gradient-text">Curated for You</span>
+    </h1>
+    <p class="hero-sub animate-slide-up" style="animation-delay:.1s">
+      ShopWiz uses machine learning to find exactly what you're looking for — personalized, fast, and smart.
+    </p>
+    <div class="hero-cta animate-slide-up" style="animation-delay:.2s">
+      <a href="{{ url_for('products') }}" class="btn-primary-lg">
+        <i class="bi bi-grid-3x3-gap"></i> Shop Now
+      </a>
+      <a href="{{ url_for('recommendations') }}" class="btn-outline-lg">
+        <i class="bi bi-stars"></i> Get Recommendations
+      </a>
+    </div>
+    <div class="hero-stats animate-fade-in" style="animation-delay:.3s">
+      <div class="stat"><strong>50K+</strong><span>Products</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong>4.8★</strong><span>Avg Rating</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong>100K+</strong><span>Happy Users</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-blob"></div>
+    <div class="floating-cards">
+      {% for p in featured %}
+      <div class="float-card float-card-{{ loop.index }}">
+        <img src="{{ url_for('static', filename=p.local_img) }}" alt="{{ p.Name }}">
+        <div class="float-info">
+          <div class="float-name">{{ truncate(p.Name, 18) }}</div>
+          <div class="float-price">${{ p.price }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ░░ CATEGORIES ░░ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Shop by <span class="gradient-text">Category</span></h2>
+      <p>Explore our wide range of curated categories</p>
+    </div>
+    <div class="categories-grid">
+      {% set cat_icons = ["💄","💊","🧴","💆","🌿","🧼","🍊","🌸"] %}
+      {% for cat in categories %}
+      <a href="{{ url_for('products', category=cat) }}" class="category-card">
+        <div class="cat-icon">{{ cat_icons[loop.index0 % 8] }}</div>
+        <span>{{ cat }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ░░ TRENDING ░░ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2>🔥 Trending <span class="gradient-text">Right Now</span></h2>
+        <p>Most loved products this week</p>
+      </div>
+      <a href="{{ url_for('products') }}" class="see-all-link">See all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="products-grid">
+      {% for p in trending %}
+      {{ product_card(p, loop.index) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ░░ WHY SHOPWIZ ░░ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Why <span class="gradient-text">ShopWiz?</span></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Recommendations</h3>
+        <p>Our ML engine suggests products using content-based filtering with cosine similarity on product tags.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Get personalized results in milliseconds. Our optimized TF-IDF index ensures instant recommendations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💎</div>
+        <h3>Curated Quality</h3>
+        <p>Every product is rated and reviewed by real customers. Shop with confidence every time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure & Private</h3>
+        <p>Your data is protected with SQLite encryption. We never share your personal information.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ CTA BANNER ░░ -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>Ready to find your perfect product?</h2>
+    <p>Join thousands of happy shoppers using AI to discover what they love.</p>
+    <a href="{{ url_for('signup') }}" class="btn-primary-lg">
+      Get Started Free <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

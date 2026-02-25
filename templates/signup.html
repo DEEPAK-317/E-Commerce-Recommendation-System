@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — ShopWiz{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-visual">
+        <div class="auth-blob"></div>
+        <div class="auth-brand">
+            <div class="auth-logo">🛍️</div>
+            <h2>Join ShopWiz</h2>
+            <p>Create your free account today</p>
+            <div class="auth-features">
+                <div class="af"><i class="bi bi-stars"></i> Personalized Recommendations</div>
+                <div class="af"><i class="bi bi-heart"></i> Save to Wishlist</div>
+                <div class="af"><i class="bi bi-bag-check"></i> Smart Cart</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <h1>Create Account 🎉</h1>
+        <p class="auth-sub">Start your personalized shopping journey</p>
+
+        <form action="{{ url_for('signup') }}" method="POST" class="auth-form" id="signupForm">
+            <div class="form-group">
+                <label for="username"><i class="bi bi-person"></i> Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required minlength="3">
+            </div>
+            <div class="form-group">
+                <label for="email"><i class="bi bi-envelope"></i> Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="bi bi-lock"></i> Password</label>
+                <div class="pass-wrap">
+                    <input type="password" id="password" name="password" placeholder="Create a password" required
+                        minlength="6">
+                    <button type="button" class="toggle-pass" onclick="togglePass('password')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="password-strength" id="pwStrength"></div>
+            </div>
+            <div class="form-group">
+                <label class="remember-me">
+                    <input type="checkbox" required> I agree to the <a href="#">Terms of Service</a>
+                </label>
+            </div>
+            <button type="submit" class="auth-submit">
+                <span>Create Account</span><i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="auth-divider"><span>or</span></div>
+        <div class="auth-switch">
+            Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function togglePass(id) {
+        const input = document.getElementById(id);
+        const btn = input.nextElementSibling.querySelector('i');
+        if (input.type === 'password') { input.type = 'text'; btn.className = 'bi bi-eye-slash'; }
+        else { input.type = 'password'; btn.className = 'bi bi-eye'; }
+    }
+    // Password strength
+    document.getElementById('password').addEventListener('input', function () {
+        const pw = this.value;
+        const el = document.getElementById('pwStrength');
+        let strength = 0, label = '', cls = '';
+        if (pw.length >= 6) strength++;
+        if (/[A-Z]/.test(pw)) strength++;
+        if (/[0-9]/.test(pw)) strength++;
+        if (/[^A-Za-z0-9]/.test(pw)) strength++;
+        if (strength <= 1) { label = 'Weak'; cls = 'weak'; }
+        else if (strength === 2) { label = 'Fair'; cls = 'fair'; }
+        else if (strength === 3) { label = 'Good'; cls = 'good'; }
+        else { label = 'Strong'; cls = 'strong'; }
+        el.innerHTML = pw ? `<div class="pw-bar ${cls}"></div><span>${label}</span>` : '';
+    });
+</script>
+{% endblock %}
